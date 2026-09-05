@@ -1,0 +1,19 @@
+#!/bin/bash
+# Run tests using mini.test (setup handled by scripts/minimal_init.lua)
+
+NVIM=${NVIM:-nvim}
+INIT=${INIT:-scripts/minimal_init.lua}
+TEST_CMD="$NVIM --headless -u $INIT -c 'lua MiniTest.run()'"
+
+if [[ -n $1 ]] && [[ $1 == "--fail-fast" ]]; then
+  echo "Running tests (fail-fast)"
+  $NVIM --headless -u "$INIT" \
+    -c "lua MiniTest.run({ execute = { stop_on_error = true } })"
+elif [[ -n $1 ]]; then
+  echo "Running single test file: $1"
+  $NVIM --headless -u "$INIT" \
+    -c "lua MiniTest.run({ collect = { find_files = function() return { '$1' } end } })"
+else
+  echo "Running all tests"
+  $NVIM --headless -u "$INIT" -c "lua MiniTest.run()"
+fi
