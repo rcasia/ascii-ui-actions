@@ -1,0 +1,13 @@
+local keymap = require("ascii-ui-actions.ui.keymap")
+
+describe("ui.keymap", function()
+	it("is the single source for the hint bar (adding an entry shows up in hint)", function()
+		local base = keymap.hint()
+		assert(base:find("r refresh", 1, true), "refresh in bar: " .. base)
+		table.insert(keymap.entries, { keys = "x", desc = "temp action", hint = true })
+		local grown = keymap.hint()
+		table.remove(keymap.entries)
+		assert(grown:find("x temp action", 1, true), "new entry flows into hint bar: " .. grown)
+		assert(keymap.hint() == base, "restored after removing entry")
+	end)
+end)

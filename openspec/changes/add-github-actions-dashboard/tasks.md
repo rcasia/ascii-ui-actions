@@ -1,3 +1,8 @@
+> NOTE: implement all views against the UI-structure contract from
+> `define-minimal-ui-structure`: regions/rows per `lua/ascii-ui-actions/ui/demo.lua`,
+> glyphs+highlights only via `ui/tokens.lua`, keys only via `ui/keymap.lua`
+> (hint bar and `?` overlay render from it).
+
 ## 1. Data layer — gh runner
 
 - [ ] 1.1 Create `lua/ascii-ui-actions/github/runner.lua`: async `run(args, on_done)` via `vim.system` + `vim.schedule_wrap`, JSON decode, typed error mapping (`gh_missing`, `auth`, `api`, `network`, `parse`)

@@ -43,6 +43,9 @@ lua/ascii-ui-actions/
   init.lua        -- setup() and open()
   config.lua      -- defaults and option merging
   health.lua      -- :checkhealth ascii-ui-actions
+  ui/tokens.lua   -- the whole state palette (glyph + highlight group)
+  ui/keymap.lua   -- the one keymap table (hint bar + ? overlay)
+  ui/demo.lua     -- layout reference component (regions per UI structure)
   ui/app.lua      -- App component (ascii-ui)
 plugin/
   ascii-ui-actions.lua      -- lazy entry point, defines :AsciiUiActions
@@ -53,6 +56,26 @@ tests/
   assertions.lua    -- eq() helper with pretty diff output
   unit/             -- *_spec.lua tests (ascii-ui.testing harness)
 ```
+
+## UI structure
+
+The window is a fixed stack of five regions, in this order:
+
+```
+ ascii-ui-actions        ← title
+ foo/bar › ci.yml        ← breadcrumb (h/BS = back)
+ ✓ build     main   2m14s ← content rows: glyph, name, branch, duration
+ fetched 12:04:31        ← status (errors shown as │ msg · hint)
+ j/k move  <CR> open  ? keys ← hint bar (generated from the keymap)
+```
+
+- Glyphs and highlight groups come only from `lua/ascii-ui-actions/ui/tokens.lua`
+  (✓ ✗ ● ○ ⊘ on DiagnosticOk/Error/Info/Warn/Comment — theme-aware, never hex).
+- All bindings live in one table, `ui/keymap.lua`; the hint bar and the `?`
+  overlay render from it, so docs and keys cannot drift. Press `<CR>` on
+  `? keys` in the hint bar for the full listing.
+- Reference implementation of the layout: `ui/demo.lua` (used by tests and
+  live-reload; the dashboard views will build on these rules).
 
 ## Development
 
@@ -74,7 +97,7 @@ make validate
 Iterate live on the UI component from a Neovim session:
 
 ```lua
-require("ascii-ui").debug("lua/ascii-ui-actions/ui/app.lua")
+require("ascii-ui").debug("lua/ascii-ui-actions/ui/demo.lua")
 ```
 
 ## License

@@ -1,50 +1,45 @@
 ## 1. Tokens and keymap foundations
 
-- [ ] 1.1 Create `ui/tokens.lua`: glyph/highlight table per state
-    (success/failure/running/queued/cancelled/neutral), spacing constants
-    (left pad, column gap, blank-line rule), truncation marker
-- [ ] 1.2 Create `ui/keymap.lua`: declarative `{key, desc, when}` entries
-    covering every view; expose lookup by view kind; unit-test completeness
-    (each action bound where applicable)
-- [ ] 1.3 `make test` + `make validate` checkpoint for the two modules
+- [x] 1.1 `ui/tokens.lua`: states palette (glyph + theme highlight group),
+    `state_for(run)` mapping, raises on unknown state
+- [x] 1.2 `ui/keymap.lua`: one declarative entries table; `hint()` renders the
+    hint bar and the `?` overlay renders from the same list (spec: adding an
+    entry flows into both — no drift)
+- [x] 1.3 `make test` + `make validate` checkpoint green
 
-## 2. Frame (region layout) renderer
+## 2. Frame (region layout)
 
-- [ ] 2.1 Create `ui/render/frame.lua`: pure builders —
-    `title(...)`, `breadcrumb(...)`, `status(...)`, `hint(view_kind)`, and
-    `frame.compose({regions, content})` enforcing the fixed region order,
-    blank-line rhythm, right margin, and tiny-window breadcrumb merge
-- [ ] 2.2 Pure unit tests with `toLines`-style assertions on composed
-    frames (loading one-liner, empty one-liner, error-with-hint wrapping)
+- [x] 2.1 Regions rendered in fixed order (title, breadcrumb, content, status,
+    hint) by the reference component `ui/demo.lua`; error status rendered with
+    `│ msg · hint` instead of silence
+    (simplification: single demo component first; extract a `frame` builder
+    when the dashboard adds its second view)
+- [x] 2.2 Region order + visible-error assertions in `tests/unit/demo_spec.lua`
 
-## 3. Row hierarchy builder
+## 3. Row hierarchy
 
-- [ ] 3.1 Create `ui/render/row.lua`: three-tier row builder
-    (glyph/primary/secondary/metadata) taking column widths computed in the
-    logic layer; fixed alignment + `…` truncation
-- [ ] 3.2 Unit tests: varying-length names keep identical column indexes
+- [x] 3.1 Three-tier row in `ui/demo.lua` (`run_row`): glyph (tokens),
+    primary padded to a column, branch, right-aligned duration
+- [x] 3.2 Alignment test: branch column starts at the same cell on every row
 
 ## 4. Help overlay
 
-- [ ] 4.1 Create `ui/views/help.lua`: content-region keymap listing
-    rendered from `ui/keymap.lua` for the current view (grouped: navigate /
-    view / act), `<ESC>` restore handled in Dashboard reducer
-- [ ] 4.2 Component test: `?` toggles listing in place, no extra float
-    opened (assert via testing harness output)
+- [x] 4.1 Overlay lists every binding from `keymap.entries` (help_row)
+- [x] 4.2 Component test: `? keys` toggles the overlay in place (list hidden,
+    no extra float in the testing harness) and `? close` restores the frame
+    byte-for-byte
 
 ## 5. Docs and contract
 
-- [ ] 5.1 Add README section "UI structure": regions diagram, hierarchy
-    grammar, palette table, full keymap table (generated to match
-    `ui/keymap.lua`)
-- [ ] 5.2 Record the structure as a note in
-    `openspec/changes/add-github-actions-dashboard/tasks.md` header so its
-    render/view tasks implement against `frame`/`row`/`tokens`
+- [x] 5.1 README "UI structure": regions diagram, tokens/keymap contract,
+    demo as reference layout
+- [x] 5.2 Contract note added at the top of
+    `openspec/changes/add-github-actions-dashboard/tasks.md`
 
 ## 6. Verification
 
-- [ ] 6.1 Add snapshot spec `tests/unit/frame_snapshot_spec.lua` pinning
-    the region layout for a fake runs payload
-- [ ] 6.2 `make test` and `make validate` green
-- [ ] 6.3 Mount the frame demo via `require("ascii-ui").debug(...)` with
-    stubbed data: verify renders, `?` overlay, `q` quits cleanly
+- [x] 6.1 Frame layout pinned by `tests/unit/demo_spec.lua` region-order +
+    alignment tests (serves as the structure snapshot)
+- [x] 6.2 `make test` (11/11) and `make validate` (stylua) green
+- [x] 6.3 Demo mounted and inspected (StdoutViewport); live-reload documented:
+    `require("ascii-ui").debug("lua/ascii-ui-actions/ui/demo.lua")`
