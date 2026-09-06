@@ -1,9 +1,9 @@
-local ui = require("ascii-ui")
 local BufferLine = require("ascii-ui.buffer.bufferline")
 local Segment = require("ascii-ui.buffer.segment")
+local ui = require("ascii-ui")
 local SELECT = require("ascii-ui.interaction_type").SELECT
-local tokens = require("ascii-ui-actions.ui.tokens")
 local keymap = require("ascii-ui-actions.ui.keymap")
+local tokens = require("ascii-ui-actions.ui.tokens")
 local useState = ui.hooks.useState
 
 local RUNS = {

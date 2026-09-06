@@ -8,10 +8,15 @@ end
 
 function M.open()
 	local ui = require("ascii-ui")
-	local App = require("ascii-ui-actions.ui.app")
-	local title = config.options.title
+	local Dashboard = require("ascii-ui-actions.ui.app")
+	local o = config.options
 	ui.mount(function()
-		return App({ title = title })
+		return Dashboard({
+			title = o.title,
+			repo = o.repo,
+			refresh_interval = o.refresh_interval,
+			cwd = vim.fn.getcwd(),
+		})
 	end)
 end
 

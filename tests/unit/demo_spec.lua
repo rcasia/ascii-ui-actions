@@ -1,5 +1,5 @@
-local testing = require("ascii-ui.testing")
 local Demo = require("ascii-ui-actions.ui.demo")
+local testing = require("ascii-ui.testing")
 local eq = require("tests.assertions").eq
 
 describe("Demo", function()

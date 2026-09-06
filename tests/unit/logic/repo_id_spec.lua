@@ -1,0 +1,47 @@
+local repo_id = require("ascii-ui-actions.logic.repo_id")
+
+describe("logic.repo_id", function()
+	it("parses ssh scp-style URLs", function()
+		assert(repo_id.parse("git@github.com:foo/bar.git") == "foo/bar")
+		assert(repo_id.parse("git@github.com:foo/bar") == "foo/bar")
+	end)
+
+	it("parses https URLs", function()
+		assert(repo_id.parse("https://github.com/foo/bar.git") == "foo/bar")
+		assert(repo_id.parse("https://github.com/foo/bar") == "foo/bar")
+	end)
+
+	it("parses ssh:// scheme URLs", function()
+		assert(repo_id.parse("ssh://git@github.com/foo/bar.git") == "foo/bar")
+	end)
+
+	it("handles nested paths (GHES org trees) by taking the last two segments", function()
+		assert(repo_id.parse("https://github.company.com/team/sub/project-name.git") == "sub/project-name")
+	end)
+
+	it("accepts dots, dashes and underscores", function()
+		assert(repo_id.parse("git@github.com:my-org/dot_files.git") == "my-org/dot_files")
+	end)
+
+	it("trims surrounding whitespace and trailing slashes", function()
+		assert(repo_id.parse("  https://github.com/foo/bar/  ") == "foo/bar")
+	end)
+
+	it("rejects malformed input", function()
+		assert(repo_id.parse("garbage") == nil)
+		assert(repo_id.parse("") == nil)
+		assert(repo_id.parse("   ") == nil)
+		assert(repo_id.parse("git@github.com:onlyowner.git") == nil)
+		assert(repo_id.parse(nil) == nil)
+		assert(repo_id.parse(42) == nil)
+	end)
+
+	it("parse_manual validates typed owner/repo", function()
+		assert(repo_id.parse_manual("foo/bar") == "foo/bar")
+		assert(repo_id.parse_manual("  foo/bar  ") == "foo/bar")
+		assert(repo_id.parse_manual("foo/bar.git") == "foo/bar")
+		assert(repo_id.parse_manual("just-a-query") == nil)
+		assert(repo_id.parse_manual("foo/bar/baz") == nil)
+		assert(repo_id.parse_manual("https://github.com/foo/bar") == nil)
+	end)
+end)
